@@ -106,10 +106,12 @@ client.on('messageCreate', async (message) => {
 
     const embed = createPlayGameEmbed(zephyrScore, sparkScore, colsScore);
     message.channel.send({ embeds: [embed] });
-  } else if (command === 'help') {
+  } else if (command === 'help' || command === 'h') {
     // Handle the "help" command
     // Send a message with the available commands
-    message.reply('Available commands: !playgame (pg or gg), !gameplay, !help');
+    message.reply(
+      'Available commands: !help (!h), !playgame (pg or gg), !gameplay'
+    );
   } else if (command === 'gameplay') {
     // Handle the "gameplay" command
     const embed = new EmbedBuilder()
