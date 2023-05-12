@@ -96,7 +96,7 @@ client.on('messageCreate', async (message) => {
 
   console.log(`Received command: ${command}`);
 
-  if (command === 'playgame') {
+  if (command === 'playgame' || command === 'pg' || command === 'gg') {
     const [zephyrScore, sparkScore, colsScore] = args.map(Number);
 
     if (isNaN(zephyrScore) || isNaN(sparkScore) || isNaN(colsScore)) {
@@ -109,7 +109,7 @@ client.on('messageCreate', async (message) => {
   } else if (command === 'help') {
     // Handle the "help" command
     // Send a message with the available commands
-    message.reply('Available commands: !playgame, !gameplay, !help');
+    message.reply('Available commands: !playgame (pg or gg), !gameplay, !help');
   } else if (command === 'gameplay') {
     // Handle the "gameplay" command
     const embed = new EmbedBuilder()
