@@ -15,13 +15,12 @@ const client = new Client({
 });
 
 function createPlayGameEmbed(s, z, c) {
+  console.log(`Spark got ${s} wpm, ZePhYr got ${z} wpm and Cols got ${c} wpm!`);
+
   const zephyrScore = parseInt(z);
   const sparkScore = parseInt(s);
   const colsScore = parseInt(c);
 
-  console.log(
-    `Spark got ${sparScore} wpm, ZePhYr got ${zephyrScore} wpm and Cols got ${colsScore} wpm!`
-  );
   let result = '';
   let points = 0;
   if (zephyrScore < 40 && sparkScore < 50 && colsScore < 100) {
