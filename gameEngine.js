@@ -112,7 +112,7 @@ client.on('messageCreate', async (message) => {
     message.reply(
       'Available commands: !help (!h), !playgame (pg or gg), !gameplay'
     );
-  } else if (command === 'gameplay') {
+  } else if (command === 'gameplay' || command === 'gp') {
     // Handle the "gameplay" command
     const embed = new EmbedBuilder()
       .setTitle('Gameplay')
