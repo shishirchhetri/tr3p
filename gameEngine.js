@@ -18,6 +18,10 @@ function createPlayGameEmbed(s, z, c) {
   const zephyrScore = parseInt(z);
   const sparkScore = parseInt(s);
   const colsScore = parseInt(c);
+
+  console.log(
+    `Spark got ${sparScore} wpm, ZePhYr got ${zephyrScore} wpm and Cols got ${colsScore} wpm!`
+  );
   let result = '';
   let points = 0;
   if (zephyrScore < 40 && sparkScore < 50 && colsScore < 100) {
@@ -73,12 +77,10 @@ function createPlayGameEmbed(s, z, c) {
   const embed = new EmbedBuilder()
     .setTitle('Play Game Results')
     .setDescription('Here are the results of the game:')
-    .addFields(
-      { name: 'Zephyr Score', value: zephyrScore, inline: true },
-      { name: 'Spark Score', value: sparkScore, inline: true },
-      { name: 'Cols Score', value: colsScore, inline: true },
-      { name: 'Result', value: result, inline: false }
-    );
+    .addFields({ name: 'Zephyr Score', value: zephyrScore, inline: true })
+    .addFields({ name: 'Spark Score', value: sparkScore, inline: true })
+    .addFields({ name: 'Cols Score', value: colsScore, inline: true })
+    .addFields({ name: 'Result', value: result, inline: false });
 
   return embed;
 }
@@ -96,22 +98,14 @@ client.on('messageCreate', async (message) => {
   console.log(`Received command: ${command}`);
 
   if (command === 'playgame') {
-    const zephyrScore = args[0];
-    const sparkScore = args[1];
-    const colsScore = args[2];
-
-    if (!zephyrScore || !sparkScore || !colsScore) {
-      message.reply('Please provide scores for all players.');
-      return;
-    }
+    const [zephyrScore, sparkScore, colsScore] = args.map(Number);
 
     if (isNaN(zephyrScore) || isNaN(sparkScore) || isNaN(colsScore)) {
-      message.reply('Scores must be numbers.');
+      message.reply('Please provide scores for all players as numbers.');
       return;
     }
 
     const embed = createPlayGameEmbed(zephyrScore, sparkScore, colsScore);
-
     message.channel.send({ embeds: [embed] });
   } else if (command === 'help') {
     // Handle the "help" command
