@@ -1,4 +1,9 @@
-const { Client, MessageEmbed, GatewayIntentBits } = require('discord.js');
+const {
+  Client,
+  EmbedBuilder,
+  Embed,
+  GatewayIntentBits,
+} = require('discord.js');
 
 const client = new Client({
   intents: [
@@ -65,7 +70,7 @@ function createPlayGameEmbed(s, z, c) {
     result = 'The match is a draw, and each player gets 0 points.';
   }
 
-  const embed = new MessageEmbed()
+  const embed = new EmbedBuilder()
     .setTitle('Play Game Results')
     .setDescription('Here are the results of the game:')
     .addFields(
@@ -111,29 +116,36 @@ client.on('messageCreate', async (message) => {
   } else if (command === 'help') {
     // Handle the "help" command
     // Send a message with the available commands
-    message.reply('Available commands: !playgame, !help');
+    message.reply('Available commands: !playgame, !gameplay, !help');
   } else if (command === 'gameplay') {
     // Handle the "gameplay" command
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle('Gameplay')
       .setDescription('Here are the rules of the game:')
-      .addField(
-        'How to Win',
-        'To win the game, you must score more points than your opponents.'
-      )
-      .addField(
-        'Scoring',
-        'Each player scores points based on their performance. The scores are as follows:\n\n- Zephyr: 0-49 points\n- Spark: 50-59 points\n- Cols: 100-119 points\n\nIf a player scores higher than the upper limit of their range, their score is capped at that limit. For example, if Zephyr scores 50 points, their score will be capped at 49 points.'
-      )
-      .addField('Draws', 'If the scores are tied, the game is a draw.')
-      .addField(
-        'Points System',
-        'Each game results in 1 point for the winner, 0 points for the loser, and 0.5 points for a draw.'
-      )
-      .addField(
-        'Examples',
-        'Here are some examples of possible score combinations and their results:\n\n- Zephyr: 45 points, Spark: 55 points, Cols: 110 points. Result: Spark wins!\n- Zephyr: 50 points, Spark: 60 points, Cols: 120 points. Result: Match drawn!\n- Zephyr: 40 points, Spark: 50 points, Cols: 100 points. Result: Zephyr wins!'
-      )
+      .addFields({
+        name: 'How to Win',
+        value:
+          'To win the game, you must score more points than your opponents.',
+      })
+      .addFields({
+        name: 'Scoring',
+        value:
+          'Each player scores points based on their performance. The scores are as follows:\n\n- Zephyr: 0-49 points\n- Spark: 50-59 points\n- Cols: 100-119 points\n\nIf a player scores higher than the upper limit of their range, their score is capped at that limit. For example, if Zephyr scores 50 points, their score will be capped at 49 points.',
+      })
+      .addFields({
+        name: 'Draws',
+        value: 'If the scores are tied, the game is a draw.',
+      })
+      .addFields({
+        name: 'Points System',
+        value:
+          'Each game results in 1 point for the winner, 0 points for the loser, and 0.5 points for a draw.',
+      })
+      .addFields({
+        name: 'Examples',
+        value:
+          'Here are some examples of possible score combinations and their results:\n\n- Zephyr: 45 points, Spark: 55 points, Cols: 110 points. Result: Spark wins!\n- Zephyr: 50 points, Spark: 60 points, Cols: 120 points. Result: Match drawn!\n- Zephyr: 40 points, Spark: 50 points, Cols: 100 points. Result: Zephyr wins!',
+      })
       .setColor('#0099ff');
     message.channel.send({ embeds: [embed] });
   } else {
