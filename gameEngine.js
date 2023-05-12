@@ -88,6 +88,8 @@ client.on('messageCreate', async (message) => {
   const args = message.content.slice(1).trim().split(/ +/);
   const command = args.shift().toLowerCase();
 
+  console.log(`Received command: ${command}`);
+
   if (command === 'playgame') {
     const zephyrScore = args[0];
     const sparkScore = args[1];
@@ -106,6 +108,10 @@ client.on('messageCreate', async (message) => {
     const embed = createPlayGameEmbed(zephyrScore, sparkScore, colsScore);
 
     message.channel.send({ embeds: [embed] });
+  } else if (command === 'help') {
+    // Handle the "help" command
+    // Send a message with the available commands
+    message.reply('Available commands: !playgame, !help');
   } else {
     message.reply('Invalid command.');
   }
