@@ -1,7 +1,7 @@
 const {
   Client,
   EmbedBuilder,
-  Embed,
+  MessageEmbed,
   GatewayIntentBits,
 } = require('discord.js');
 
@@ -74,12 +74,12 @@ function createPlayGameEmbed(s, z, c) {
   }
 
   const embed = new EmbedBuilder()
-    .setTitle('Play Game Results')
+    .setTitle('MATCH Results')
     .setDescription('Here are the results of the game:')
-    .addFields({ name: 'Zephyr Score', value: zephyrScore, inline: true })
-    .addFields({ name: 'Spark Score', value: sparkScore, inline: true })
-    .addFields({ name: 'Cols Score', value: colsScore, inline: true })
-    .addFields({ name: 'Result', value: result, inline: false });
+    .addFields({ name: 'Zephyr Score', value: `${zephyrScore}`, inline: true })
+    .addFields({ name: 'Spark Score', value: `${sparkScore}`, inline: true })
+    .addFields({ name: 'Cols Score', value: `${colsScore}`, inline: true })
+    .addFields({ name: 'Result', value: `${result}`, inline: false });
 
   return embed;
 }
