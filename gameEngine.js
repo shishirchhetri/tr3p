@@ -44,21 +44,21 @@ function createPlayGameEmbed(s, z, c) {
     sparkScore < sparkWinningScore &&
     colsScore < colsWinningScore
   ) {
-    result = 'Zephyr wins!';
+    result = 'Zephyr wins! 🔥';
     points = 1;
   } else if (
     sparkScore >= sparkWinningScore &&
     zephyrScore < zephyrWinningScore &&
     colsScore < colsWinningScore
   ) {
-    result = 'Spark wins!';
+    result = 'Spark wins! 🔥';
     points = 1;
   } else if (
     colsScore >= colsWinningScore &&
     zephyrScore < zephyrWinningScore &&
     sparkScore < sparkWinningScore
   ) {
-    result = 'Cols wins!';
+    result = 'Cols wins! 🔥';
     points = 1;
   } else if (
     zephyrScore >= zephyrHighScore &&
@@ -71,29 +71,38 @@ function createPlayGameEmbed(s, z, c) {
     sparkScore < sparkHighScore &&
     colsScore < colsHighScore
   ) {
-    result = 'Zephyr wins!';
+    result = 'Zephyr wins! 🔥';
     points = 1;
   } else if (
     sparkScore >= sparkHighScore &&
     zephyrScore < zephyrHighScore &&
     colsScore < colsHighScore
   ) {
-    result = 'Spark wins!';
+    result = 'Spark wins! 🔥';
     points = 1;
   } else if (
     colsScore >= colsHighScore &&
     zephyrScore < zephyrHighScore &&
     sparkScore < sparkHighScore
   ) {
-    result = 'Cols wins!';
+    result = 'Cols wins! 🔥';
     points = 1;
+  } else if (
+    zephyrScore >= zephyrDrawScore &&
+    zephyrScore < zephyrWinningScore &&
+    sparkScore < sparkWinningScore &&
+    sparkScore >= sparkDrawScore &&
+    colsScore < colsDrawScore
+  ) {
+    result = 'Match drawn!';
+    points = 0;
   } else if (
     zephyrScore >= zephyrDrawScore &&
     zephyrScore < zephyrWinningScore &&
     sparkScore < sparkWinningScore &&
     colsScore < colsDrawScore
   ) {
-    result = 'Zephyr wins!';
+    result = 'Zephyr wins! 🔥';
     points = 1;
   } else if (
     sparkScore >= sparkDrawScore &&
@@ -101,15 +110,24 @@ function createPlayGameEmbed(s, z, c) {
     zephyrScore < zephyrWinningScore &&
     colsScore < colsDrawScore
   ) {
-    result = 'Spark wins!';
+    result = 'Spark wins! 🔥';
     points = 1;
   } else if (
     colsScore >= colsDrawScore &&
     colsScore < colsWinningScore &&
-    zephyrScore < zephyrWinningScore &&
+    zephyrScore < zephyrWinningScore && 
+    zephyrScore >= zephyrDrawScore &&
     sparkScore < sparkDrawScore
   ) {
-    result = 'Cols wins!';
+    result = 'Match drawn!';
+    points = 0;
+  } else if (
+    colsScore >= colsDrawScore &&
+    colsScore < colsWinningScore &&
+    zephyrScore < zephyrWinningScore && 
+    sparkScore < sparkDrawScore
+  ) {
+    result = 'Cols wins! 🔥';
     points = 1;
   } else {
     result = 'The match is a draw, and each player gets 0 points.';
@@ -125,7 +143,7 @@ function createPlayGameEmbed(s, z, c) {
     .setTimestamp();
 
   if (points > 0) {
-    embed.addFields({name: 'Points', value: `${points}`});
+    embed.addFields({name: 'Points', value: `${result} and gets ${points} yay 😆`});
   }
 
   return embed;
