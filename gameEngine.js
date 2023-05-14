@@ -4,6 +4,8 @@ const {
   MessageEmbed,
   GatewayIntentBits,
 } = require('discord.js');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 const client = new Client({
   intents: [
@@ -115,7 +117,7 @@ function createPlayGameEmbed(s, z, c) {
   } else if (
     colsScore >= colsDrawScore &&
     colsScore < colsWinningScore &&
-    zephyrScore < zephyrWinningScore && 
+    zephyrScore < zephyrWinningScore &&
     zephyrScore >= zephyrDrawScore &&
     sparkScore < sparkDrawScore
   ) {
@@ -124,7 +126,7 @@ function createPlayGameEmbed(s, z, c) {
   } else if (
     colsScore >= colsDrawScore &&
     colsScore < colsWinningScore &&
-    zephyrScore < zephyrWinningScore && 
+    zephyrScore < zephyrWinningScore &&
     sparkScore < sparkDrawScore
   ) {
     result = 'Cols wins! 🔥';
@@ -143,7 +145,10 @@ function createPlayGameEmbed(s, z, c) {
     .setTimestamp();
 
   if (points > 0) {
-    embed.addFields({name: 'Points', value: `${result} and gets ${points} yay 😆`});
+    embed.addFields({
+      name: 'Points',
+      value: `${result} and gets ${points} yay 😆`,
+    });
   }
 
   return embed;
@@ -179,7 +184,9 @@ client.on('messageCreate', async (message) => {
       .addFields(
         { name: '!help (!h)', value: 'Displays the available commands.' },
         { name: '!playgame (pg or gg)', value: 'Starts a game.' },
-        { name: '!gameplay', value: 'Displays the game instructions.' }
+        { name: '!gameplay', value: 'Displays the game instructions.' },
+        { name: '!wpm (!latest)', value: 'Displays the latest (last) wpm.'},
+        { name: '!average (!avg or !current or !avgwpm)', value: 'Displays the last ten average wpm.'}
       );
     // Send the embed as a reply to the user's message
     message.reply({ embeds: [embed] });
@@ -214,6 +221,23 @@ client.on('messageCreate', async (message) => {
       })
       .setColor('#0099ff');
     message.channel.send({ embeds: [embed] });
+  } else if ((command === 'wpm') || (command === 'latest')) {
+    const username = message.content.slice(5);
+    const latestWpm = await getLatestWpm(username);
+    if (latestWpm) {
+      message.reply(`${username}'s latest WPM is ${latestWpm}.`);
+    } else {
+      message.reply(`Could not retrieve ${username}'s latest WPM.`);
+    }
+  } else if ((command === 'avg') || (command === 'current') || (command === 'average') || (command === 'avgwpm')) {
+    // const username = message.content.slice(11);
+    const username = message.content.slice(5);
+    const last10WpmAvg = await getLast10WpmAvg(username);
+    if (last10WpmAvg) {
+      message.reply(`${username}'s current average WPM is ${last10WpmAvg}.`);
+    } else {
+      message.reply(`Could not retrieve ${username}'s current average WPM.`);
+    }
   } else {
     message.reply('Invalid command.');
   }
@@ -221,6 +245,48 @@ client.on('messageCreate', async (message) => {
   const scores = message.content.trim().split(/\s+/g).slice(1);
   console.log(scores);
 });
+
+/*
+TYPERACER API END POINT - https://typeracerdata.com/api?username={username}
+*/
+
+async function getLatestWpm(username) {
+  try {
+    const url = `https://typeracerdata.com/api?username=${username}`;
+    const response = await axios.get(url);
+    // const latestWpm = response.data.match(/<td>Latest<\/td>\n<td>(.*?)<\/td>/)[1];
+    const latestWpm = response.data.recent_races[0].wpm;
+    return latestWpm;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getLast10WpmAvg(username) {
+  try {
+    const url = `https://typeracerdata.com/api?username=${username}`;
+    const response = await axios.get(url);
+    // const recentRaces = response.data.recent_races;
+    // const last10Races = recentRaces.slice(0, 10);
+    // const last10WpmSum = last10Races.reduce(
+    //   (sum, race) => sum + parseFloat(race.wpm),
+    //   0
+    // );
+    // const last10WpmAvg = last10WpmSum / last10Races.length;
+    // return last10WpmAvg.toFixed(2);
+
+    // const last10Wpm = response.data.wpm_last10;
+    // const last10WpmSum = last10Wpm.reduce((sum, wpm) => sum + parseFloat(wpm), 0);
+    // const last10WpmAvg = last10WpmSum / last10Wpm.length;
+    // return last10WpmAvg;
+
+    const last10AvgWpm = response.data.account.wpm_last10; 
+    return last10AvgWpm;
+    
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 const mySecret = process.env['CLIENTTOKEN'];
 client.login(mySecret);
