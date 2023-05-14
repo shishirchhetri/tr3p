@@ -15,7 +15,7 @@ const client = new Client({
 });
 
 function createPlayGameEmbed(s, z, c) {
-  console.log(`Spark = ${s} wpm, ZePhYr = ${z} wpm and Cols = ${c} wpm!`);
+  console.log(`Spark = ${s} wpm, ZePhYr = ${z} wpm and Cols = ${c} wpm`);
 
   const zephyrScore = parseInt(z);
   const sparkScore = parseInt(s);
@@ -125,7 +125,7 @@ function createPlayGameEmbed(s, z, c) {
     .setTimestamp();
 
   if (points > 0) {
-    embed.addField('Points', `${points}`);
+    embed.addFields({name: 'Points', value: `${points}`});
   }
 
   return embed;
