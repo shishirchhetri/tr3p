@@ -15,57 +15,99 @@ const client = new Client({
 });
 
 function createPlayGameEmbed(s, z, c) {
-  console.log(`Spark got ${s} wpm, ZePhYr got ${z} wpm and Cols got ${c} wpm!`);
+  console.log(`Spark = ${s} wpm, ZePhYr = ${z} wpm and Cols = ${c} wpm!`);
 
   const zephyrScore = parseInt(z);
   const sparkScore = parseInt(s);
   const colsScore = parseInt(c);
 
+  const zephyrWinningScore = 50;
+  const sparkWinningScore = 60;
+  const colsWinningScore = 110;
+  const zephyrHighScore = 55;
+  const sparkHighScore = 65;
+  const colsHighScore = 120;
+  const zephyrDrawScore = 40;
+  const sparkDrawScore = 50;
+  const colsDrawScore = 100;
+
   let result = '';
   let points = 0;
-  if (zephyrScore < 40 && sparkScore < 50 && colsScore < 100) {
+  if (
+    zephyrScore < colsDrawScore &&
+    sparkScore < sparkDrawScore &&
+    colsScore < colsDrawScore
+  ) {
     result = 'Match drawn!';
-  } else if (zephyrScore >= 50 && sparkScore < 60 && colsScore < 110) {
-    result = 'Zephyr wins!';
-    points = 1;
-  } else if (sparkScore >= 60 && zephyrScore < 50 && colsScore < 110) {
-    result = 'Spark wins!';
-    points = 1;
-  } else if (colsScore >= 110 && zephyrScore < 50 && sparkScore < 60) {
-    result = 'Cols wins!';
-    points = 1;
-  } else if (zephyrScore >= 55 && sparkScore >= 65 && colsScore >= 120) {
-    result = 'Match drawn!';
-  } else if (zephyrScore >= 55 && sparkScore < 65 && colsScore < 120) {
-    result = 'Zephyr wins!';
-    points = 1;
-  } else if (sparkScore >= 65 && zephyrScore < 55 && colsScore < 120) {
-    result = 'Spark wins!';
-    points = 1;
-  } else if (colsScore >= 120 && zephyrScore < 55 && sparkScore < 65) {
-    result = 'Cols wins!';
-    points = 1;
   } else if (
-    zephyrScore >= 40 &&
-    zephyrScore < 50 &&
-    sparkScore < 50 &&
-    colsScore < 100
+    zephyrScore >= zephyrWinningScore &&
+    sparkScore < sparkWinningScore &&
+    colsScore < colsWinningScore
   ) {
     result = 'Zephyr wins!';
     points = 1;
   } else if (
-    sparkScore >= 50 &&
-    sparkScore < 60 &&
-    zephyrScore < 50 &&
-    colsScore < 100
+    sparkScore >= sparkWinningScore &&
+    zephyrScore < zephyrWinningScore &&
+    colsScore < colsWinningScore
   ) {
     result = 'Spark wins!';
     points = 1;
   } else if (
-    colsScore >= 100 &&
-    colsScore < 110 &&
-    zephyrScore < 50 &&
-    sparkScore < 50
+    colsScore >= colsWinningScore &&
+    zephyrScore < zephyrWinningScore &&
+    sparkScore < sparkWinningScore
+  ) {
+    result = 'Cols wins!';
+    points = 1;
+  } else if (
+    zephyrScore >= zephyrHighScore &&
+    sparkScore >= sparkHighScore &&
+    colsScore >= colsHighScore
+  ) {
+    result = 'Match drawn!';
+  } else if (
+    zephyrScore >= zephyrHighScore &&
+    sparkScore < sparkHighScore &&
+    colsScore < colsHighScore
+  ) {
+    result = 'Zephyr wins!';
+    points = 1;
+  } else if (
+    sparkScore >= sparkHighScore &&
+    zephyrScore < zephyrHighScore &&
+    colsScore < colsHighScore
+  ) {
+    result = 'Spark wins!';
+    points = 1;
+  } else if (
+    colsScore >= colsHighScore &&
+    zephyrScore < zephyrHighScore &&
+    sparkScore < sparkHighScore
+  ) {
+    result = 'Cols wins!';
+    points = 1;
+  } else if (
+    zephyrScore >= zephyrDrawScore &&
+    zephyrScore < zephyrWinningScore &&
+    sparkScore < sparkWinningScore &&
+    colsScore < colsDrawScore
+  ) {
+    result = 'Zephyr wins!';
+    points = 1;
+  } else if (
+    sparkScore >= sparkDrawScore &&
+    sparkScore < sparkWinningScore &&
+    zephyrScore < zephyrWinningScore &&
+    colsScore < colsDrawScore
+  ) {
+    result = 'Spark wins!';
+    points = 1;
+  } else if (
+    colsScore >= colsDrawScore &&
+    colsScore < colsWinningScore &&
+    zephyrScore < zephyrWinningScore &&
+    sparkScore < sparkDrawScore
   ) {
     result = 'Cols wins!';
     points = 1;
@@ -79,7 +121,12 @@ function createPlayGameEmbed(s, z, c) {
     .addFields({ name: 'Zephyr Score', value: `${zephyrScore}`, inline: true })
     .addFields({ name: 'Spark Score', value: `${sparkScore}`, inline: true })
     .addFields({ name: 'Cols Score', value: `${colsScore}`, inline: true })
-    .addFields({ name: 'Result', value: `${result}`, inline: false });
+    .addFields({ name: 'Result', value: `${result}`, inline: false })
+    .setTimestamp();
+
+  if (points > 0) {
+    embed.addField('Points', `${points}`);
+  }
 
   return embed;
 }
@@ -107,11 +154,17 @@ client.on('messageCreate', async (message) => {
     const embed = createPlayGameEmbed(zephyrScore, sparkScore, colsScore);
     message.channel.send({ embeds: [embed] });
   } else if (command === 'help' || command === 'h') {
-    // Handle the "help" command
-    // Send a message with the available commands
-    message.reply(
-      'Available commands: !help (!h), !playgame (pg or gg), !gameplay'
-    );
+    // Create an embed card with the available commands
+    const embed = new EmbedBuilder()
+      .setTitle('Available Commands')
+      .setDescription('Here are the available commands:')
+      .addFields(
+        { name: '!help (!h)', value: 'Displays the available commands.' },
+        { name: '!playgame (pg or gg)', value: 'Starts a game.' },
+        { name: '!gameplay', value: 'Displays the game instructions.' }
+      );
+    // Send the embed as a reply to the user's message
+    message.reply({ embeds: [embed] });
   } else if (command === 'gameplay' || command === 'gp') {
     // Handle the "gameplay" command
     const embed = new EmbedBuilder()
