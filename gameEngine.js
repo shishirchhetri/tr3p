@@ -185,8 +185,15 @@ client.on('messageCreate', async (message) => {
         { name: '!help (!h)', value: 'Displays the available commands.' },
         { name: '!playgame (pg or gg)', value: 'Starts a game.' },
         { name: '!gameplay', value: 'Displays the game instructions.' },
-        { name: '!wpm (!latest)', value: 'Displays the latest (last) wpm.'},
-        { name: '!average (!avg or !current or !avgwpm)', value: 'Displays the last ten average wpm.'}
+        { name: '!wpm (!latest)', value: 'Displays the latest (last) wpm.' },
+        {
+          name: '!average (!avg or !current or !avgwpm)',
+          value: 'Displays the last ten average wpm.',
+        },
+        {
+          name: '!highesttoday (!ht)',
+          value: 'Displays the highest wpm got today.',
+        }
       );
     // Send the embed as a reply to the user's message
     message.reply({ embeds: [embed] });
@@ -221,7 +228,7 @@ client.on('messageCreate', async (message) => {
       })
       .setColor('#0099ff');
     message.channel.send({ embeds: [embed] });
-  } else if ((command === 'wpm') || (command === 'latest')) {
+  } else if (command === 'wpm' || command === 'latest') {
     const username = message.content.slice(5);
     const latestWpm = await getLatestWpm(username);
     if (latestWpm) {
@@ -229,7 +236,12 @@ client.on('messageCreate', async (message) => {
     } else {
       message.reply(`Could not retrieve ${username}'s latest WPM.`);
     }
-  } else if ((command === 'avg') || (command === 'current') || (command === 'average') || (command === 'avgwpm')) {
+  } else if (
+    command === 'avg' ||
+    command === 'current' ||
+    command === 'average' ||
+    command === 'avgwpm'
+  ) {
     // const username = message.content.slice(11);
     const username = message.content.slice(5);
     const last10WpmAvg = await getLast10WpmAvg(username);
@@ -237,6 +249,14 @@ client.on('messageCreate', async (message) => {
       message.reply(`${username}'s current average WPM is ${last10WpmAvg}.`);
     } else {
       message.reply(`Could not retrieve ${username}'s current average WPM.`);
+    }
+  } else if (command === '!highesttoday' || command === 'ht') {
+    const username = message.content.slice(3);
+    const highestWpmToday = await getHighestWpmToday(username);
+    if (highestWpmToday) {
+      message.reply(`${username}'s highest WPM today is ${highestWpmToday}.`);
+    } else {
+      message.reply(`Could not retrieve ${username}'s highest WPM today.`);
     }
   } else {
     message.reply('Invalid command.');
@@ -280,9 +300,30 @@ async function getLast10WpmAvg(username) {
     // const last10WpmAvg = last10WpmSum / last10Wpm.length;
     // return last10WpmAvg;
 
-    const last10AvgWpm = response.data.account.wpm_last10; 
+    const last10AvgWpm = response.data.account.wpm_last10;
     return last10AvgWpm;
-    
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function getHighestWpmToday(username) {
+  try {
+    const url = `https://typeracerdata.com/api?username=${username}`;
+    const response = await axios.get(url);
+    if (!response.data || !response.data.recent_races) {
+      throw new Error(`Could not retrieve recent races for ${username}.`);
+    }
+    const races = response.data.recent_races;
+    const today = new Date();
+    const last24hours = new Date(today - 24 * 60 * 60 * 1000); // subtract 24 hours from today
+    const todayRaces = races.filter(
+      (race) => new Date(race.timestamp) > last24hours
+    );
+    const highestWpmToday = Math.max(
+      ...todayRaces.map((race) => parseFloat(race.wpm))
+    );
+    return highestWpmToday;
   } catch (error) {
     console.error(error);
   }
