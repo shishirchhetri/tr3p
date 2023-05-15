@@ -6,6 +6,8 @@ const {
 } = require("discord.js");
 const axios = require("axios");
 const cheerio = require("cheerio");
+require('dotenv').config()
+
 
 const client = new Client({
   intents: [
@@ -352,6 +354,5 @@ async function getTotalRacesToday(username) {
   });
   }
 
-const mySecret =
-  "MTEwNjQ3MDM2NDgyMjkwOTAwMA.GlgMcZ.e_2gwtY6BlHidNdZbYzOmmt9EKYa71uxRMD2RU";
+const mySecret = process.env.CLIENTTOKEN;
 client.login(mySecret);
