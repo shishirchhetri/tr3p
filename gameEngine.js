@@ -329,5 +329,5 @@ async function getHighestWpmToday(username) {
   }
 }
 
-const mySecret = process.env['CLIENTTOKEN'];
-client.login(mySecret);
+const mySecret = 'MTEwNjQ3MDM2NDgyMjkwOTAwMA.GlgMcZ.e_2gwtY6BlHidNdZbYzOmmt9EKYa71uxRMD2RU';
+  client.login(mySecret);
